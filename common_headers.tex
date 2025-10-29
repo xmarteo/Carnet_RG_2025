@@ -215,6 +215,29 @@ headsep=3mm,
 	\versiculus{Benedícat vos omnípotens Deus, \cc Pater, et Fílius, et Spíritus Sanctus}{Amen}{Et que Dieu tout-puissant vous bénisse, le Père, le Fils, et le Saint-Esprit}{Amen}
 }
 
+%% Macro to print the Pater secreto
+\newcommand{\patersecreto}{
+	\versiculus{Pater noster... \rubric{secreto usque ad} Et ne nos indúcas in tentatiónem:}{Sed líbera nos a malo.}{Notre Père... \rubric{en silence jusqu'à} et ne nous laisse pas entrer en tentation.}{Mais délivre-nous du mal.}
+}
+
+\newcommand{\absolutio}[2]{
+	\twocoltext{
+		\rubric{Absolutio.} #1 \\
+		\rr Amen.
+	}{
+		\rubric{Absolution.} #2 \\
+		\rr Amen.
+	}
+}
+
+\newcommand{\benedictio}[2]{
+	\versiculus{Iube, domne, benedícere.\\\rubric{Benedictio.} #1}{Amen.}{Veuillez, maître, bénir.\\\rubric{Bénédiction} #2}{Amen.}
+}
+
+\newcommand{\tuautem}{
+	\versiculus{Tu autem, Dómine, miserére nobis.}{Deo grátias.}{Et toi Seigneur, aie pitié de nous.}{Nous rendons grâces à Dieu.}
+}
+
 %%%%%%%%%%%%%%% PAGE HEADERS AND FOOTERS %%%%%%%
 
 \pagestyle{fancy}
