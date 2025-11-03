@@ -13,6 +13,10 @@
 \usepackage{needspace}
 \usepackage{etoolbox}
 \usepackage{enumitem}
+\usepackage{lettrine}
+\usepackage{longtable}
+\usepackage{luacode}
+\usepackage{alltt}
 
 \setdefaultlanguage[variant=french, frenchitemlabels=false]{french}
 
@@ -75,20 +79,6 @@ headsep=3mm,
 %% in case we show NABC, font selection
 \gresetnabcfont{gregall}{10} 
 
-\newcommand{\smallscore}[1]{
-  \gresetinitiallines{0}
-  \vspace{1mm}
-  \gregorioscore{\subfix{gabc/#1}}
-  \vspace{-1mm}
-  \gresetinitiallines{1}
-}
-
-\newcommand{\gscore}[1]{
-  \phantomsection
-  \label{#1}
-  \gregorioscore{\subfix{gabc/#1}}
-}
-
 \newcommand{\incipit}[2]{
   \gresetinitiallines{0}
   \gregorioscore{\subfix{incipits/#1_#2}}
@@ -129,49 +119,184 @@ headsep=3mm,
 \defaultinitialspace{}
 
 %%%%%%%%%%%%%%% Score annotations
-\grechangestyle{annotation}{\small}
-% on définit le système qui capture des headers pour générer des annotations
-% cette commande sera appelée pour définir des abréviations ou autres substitutions
-\newcommand{\resultat}{}
-\newcommand{\abbrev}[3]{
-  \IfSubStr{#1}{#2}{ \renewcommand{\resultat}{#3} }{}
+
+%% This global variable contains the office-part of the piece currently being
+%% typeset, for indexing and annotation purposes.
+\newcommand{\officepartbuffer}{}
+%% This global variable contains the file name, i.e. label,
+%% of the piece currently being typeset.
+\newcommand{\labelbuffer}{}
+%% This global variable contains the name of the index (A, H, R) relevant to the
+%% piece currently being typeset, if any indexing is needed for that piece.
+\newcommand{\indexnamebuffer}{}
+%% This global variable contains the order number of the piece in the current hour
+%% for annotation purposes ("Ant. 1", "Ant. 2", etc.)
+\newcommand{\numberbuffer}{}
+%% This global variable contains the mode+differentia of the last antiphon
+%% for the purposes of fetching the correct pointed psalm
+\newcommand{\nextpsalmmode}{}
+%% This global variable contains the mode+differentia of the last piece
+%% for indexing and annotation purposes
+\newcommand{\indexedmode}{}
+
+%% Given an office-part header (from Gregorio header capture), 
+%% this section annotates the score according to the office-part, 
+%% stored in \officepartbuffer, and the number stored by \gscore in \numberbuffer
+%% and stores into \indexnamebuffer the corresponding index, for later use.
+\newcommand{\abbrev}[4]{
+  \IfSubStr{#1}{#2}{%
+	\renewcommand{\officepartbuffer}{#3}%
+	\renewcommand{\indexnamebuffer}{#4}%
+  }%
+  {}%
 }
-\newcommand{\officepartannotation}[1]{
-  \renewcommand{\resultat}{#1}
-  \abbrev{#1}{ntro}{Intr.}
-  \abbrev{#1}{re}{Resp.}
-  \abbrev{#1}{espo}{Resp.}
-  \abbrev{#1}{adu}{Gr.}
-  \abbrev{#1}{ll}{All.}
-  \abbrev{#1}{act}{Tract.}
-  \abbrev{#1}{equen}{Seq.}
-  \abbrev{#1}{ffert}{Off.}
-  \abbrev{#1}{ommun}{Co.}
-  \abbrev{#1}{an}{Ant.}
-  \abbrev{#1}{ntiph}{Ant.}
-  \abbrev{#1}{ntic}{Cant.}
-  \abbrev{#1}{ymn}{Hy.}
-  \abbrev{#1}{salm}{}
-  \abbrev{#1}{Toni Communes}{}
-  \abbrev{#1}{yrial}{}
-  \greannotation{\resultat}
+\newcommand{\officepartannotation}[1]{%
+  \renewcommand{\officepartbuffer}{#1}%
+  \renewcommand{\indexnamebuffer}{}%
+  \abbrev{#1}{Antiphona}{Ant.}{A}%
+  \abbrev{#1}{Hymnus}{Hy.}{H}%
+  \abbrev{#1}{ntro}{Intr.}{I}%
+  \abbrev{#1}{re}{Resp.}{R}%
+  \abbrev{#1}{espo}{Resp.}{R}%
+  \abbrev{#1}{adu}{Gr.}{G}%
+  \abbrev{#1}{ll}{All.}{Al}%
+  \abbrev{#1}{act}{Tract.}{T}%
+  \abbrev{#1}{equen}{Seq.}{}%
+  \abbrev{#1}{ffert}{Off.}{O}%
+  \abbrev{#1}{ommun}{Co.}{C}%
+  \abbrev{#1}{an}{Ant.}{A}%
+  \abbrev{#1}{ntiph}{Ant.}{A}%
+  \abbrev{#1}{ntic}{Cant.}{}%
+  \abbrev{#1}{ymn}{Hy.}{H}%
+  \abbrev{#1}{salm}{}{}%
+  \abbrev{#1}{yrial}{}{}%
+  \abbrev{#1}{Responsorium breve}{R.Br.}{R}%
+  \abbrev{#1}{Toni Communes}{}{}%
+  \greannotation{\officepartbuffer \numberbuffer}%
+}
+
+%%%% This is deep magic required to define \grenewcommand, which is the same as
+%%%% \renewcommand but has global effects
+\makeatletter
+\def\gnewcommand{\g@star@or@long\new@command}
+\def\grenewcommand{\g@star@or@long\renew@command}
+\def\g@star@or@long#1{% 
+  \@ifstar{\let\l@ngrel@x\global#1}{\def\l@ngrel@x{\long\global}#1}}
+\makeatother
+%%%% end deep magic
+
+\newcommand{\changemode}[3]{%
+  \ifstrequal{#1}{#2}{%
+	\grenewcommand{\nextpsalmmode}{#3}%
+  }%
+  {}%
 }
 \newcommand{\modeannotation}[1]{
-  \renewcommand{\resultat}{#1}
-  \abbrev{#1}{1}{ {\sc i} }
-  \abbrev{#1}{2}{ {\sc ii} }
-  \abbrev{#1}{3}{ {\sc iii} }
-  \abbrev{#1}{4}{ {\sc iv} }
-  \abbrev{#1}{5}{ {\sc v} }
-  \abbrev{#1}{6}{ {\sc vi} }
-  \abbrev{#1}{7}{ {\sc vii} }
-  \abbrev{#1}{8}{ {\sc viii} }
-  \greannotation{\resultat}
+  \grenewcommand{\nextpsalmmode}{#1}
+  \renewcommand{\indexedmode}{#1}	
+  \changemode{#1}{1a}{1a}
+  \changemode{#1}{1a2}{1a2}
+  \changemode{#1}{1a3}{1a3}
+  \changemode{#1}{1f}{1f}
+  \changemode{#1}{1g}{1g}
+  \changemode{#1}{1g2}{1g2}
+  \changemode{#1}{1g3}{1g3}
+  \changemode{#1}{2D}{2}
+  \changemode{#1}{3a}{3a}
+  \changemode{#1}{3b}{3b}
+  \changemode{#1}{3g}{3g}
+  \changemode{#1}{3g2}{3g2}
+  \changemode{#1}{4c}{4-alt-c}
+  \changemode{#1}{4E}{4E}
+  \changemode{#1}{4g}{4g}
+  \changemode{#1}{5a}{5}
+  \changemode{#1}{6F}{6}
+  \changemode{#1}{7a}{7a}
+  \changemode{#1}{7b}{7b}
+  \changemode{#1}{7c}{7c}
+  \changemode{#1}{7c2}{7c2}
+  \changemode{#1}{8c}{8c}
+  \changemode{#1}{8G}{8G}
+  \changemode{#1}{Per.}{per}
+  \greannotation{\indexedmode}
 }
+
+%% Given a name header (from Gregorio header capture),
+%% this section labels the piece with the piece label and label name,
+%% and indexes the piece accordint to its office-part and mode
+\begin{luacode*}
+function delete_newline ( s )
+   s = string.gsub ( s, 'newline', '')
+   s = string.gsub ( s, 'hspace', '')
+   s = string.gsub ( s, '4mm', '')
+   s = string.gsub ( s, 'protect', '')
+   s = string.gsub ( s, 'hbox', '')
+   s = string.gsub ( s, [[\]], '')
+   s = string.gsub ( s, "{}", '')
+   tex.sprint ( s )
+end
+\end{luacode*}
+\makeatletter
+\newcommand{\namecapture}[1]{%
+  %% this prevents page breaks between the phantom section and its label, and the actual score.
+  \needspace{4\baselineskip}%
+  \protected@edef\@currentlabelname{\directlua{delete_newline(\luastring{#1})}}%
+  \phantomsection%
+  \label{\labelbuffer}%
+  %% indexation
+  \ifdefstrequal{H}{\indexnamebuffer}{%
+    \index[\indexnamebuffer]{{#1}@\indexedmode & #1}%
+  }{}%
+  \ifdefstrequal{A}{\indexnamebuffer}{%
+    \index[\indexnamebuffer]{{#1}@\indexedmode & #1}%
+  }{}%
+  \ifdefstrequal{R}{\indexnamebuffer}{%
+    \index[\indexnamebuffer]{#1}%
+  }{}%
+}
+\makeatother
+
 \gresetheadercapture{office-part}{officepartannotation}{}
 \gresetheadercapture{mode}{modeannotation}{string}
+\gresetheadercapture{name}{namecapture}{}
 
-\renewcommand{\textbf}{\underline{#1}}
+\newcommand{\smallscore}[2]{
+  \gresetinitiallines{0}
+  \gregorioscore{\subfix{gabc/#1}}
+  \gresetinitiallines{1}
+  \translation{#2}
+}
+
+\newcommand{\gscore}[3][]{
+  %% #1 : (optional) the number to be printed near "Ant." in a multi-antiphon hour
+  %% #2 : the hudelmaier code, which is also the name of the file, and the label.
+  %% #3 : the translation of the piece.
+  \renewcommand{\labelbuffer}{#2}
+  \renewcommand{\numberbuffer}{#1}
+  \columnratio{0.75}
+  \begin{paracol}{2}
+  \gregorioscore{gabc/#2}
+  \switchcolumn
+  \translation{#3}
+  \end{paracol}
+  \columnratio{0.5}
+}
+
+\newcommand{\hymnus}[1]{
+  %% #1 : the hudelmaier code, which is also the name of the file,
+  %%      and the label, and the name of the translation file
+  \renewcommand{\labelbuffer}{#1}
+  \renewcommand{\numberbuffer}{}
+  \columnratio{0.75}
+  \begin{paracol}{2}
+  \gregorioscore{gabc/#1}
+  \switchcolumn
+  %\begin{alltt}\normaltext%
+  \input{hymni_fr/#1}
+  %\end{alltt}
+  \end{paracol}
+  \columnratio{0.5}
+}
 
 %%%%%%%%%%%%%%% GRAPHICAL ELEMENTS %%%%%%%%%%%%%%%
 
@@ -203,10 +328,23 @@ headsep=3mm,
 \newcommand{\rubric}[1]{\textcolor{gregoriocolor}{\emph{#1}}}
 \newcommand{\normaltext}[1]{{\normalfont\normalcolor #1}}
 
+%% Macro to print the name of a score in normal characters inside a \rubric
+\newcommand{\scorename}[1]{\normaltext{\nameref{M-#1}}}
+
 %% Macro to print initials of some texts in red
 \newcommand{\colored}[1]{
 	\textcolor{gregoriocolor}{#1}%
 }
+
+%% Macro to print rubrics that inaugurate a section of more rubrics (in red, normal font, centered)
+\newcommand{\titlerubric}[1]{{\centering{}\textcolor{gregoriocolor}{#1}\par}}
+
+%% Macro to print french-language inflexions as underlined
+\newcommand{\frflex}[1]{\underline{#1}}
+
+%% Macros to print preparatory and accented syllables in psalms
+\newcommand{\sylac}[1]{\textbf{#1}}
+\newcommand{\sylprep}[1]{\textit{#1}}
 
 %% Macro to print the blessing 
 \newcommand{\blessing}{
@@ -260,8 +398,12 @@ headsep=3mm,
 \setlength\columnseprule{0.4pt}
 \setlength{\multicolsep}{6pt plus 2pt minus 1.5pt}
 
-\newcommand{\psalm}[2]{
-	\vspace{0.5\baselineskip}
+\newcommand{\twocolitemizedtext}[3]{
+	%% macro générique pour les cantiques et psaumes
+	%% #1 premier fichier
+	%% #2 deuxième fichier
+	%% #3 titre
+	\smalltitle{#3}
 	\begin{paracol}{2}
 	\begin{itemize}[
 		label=\null, 
@@ -273,7 +415,7 @@ headsep=3mm,
 		parsep=0pt, 
 		itemsep=0pt,
 		topsep=-2mm]
-	\input{psalmi_la/#1_#2.tex}
+	\input{#1}
 	\end{itemize}
 	\switchcolumn
 	\begin{itemize}[
@@ -286,9 +428,35 @@ headsep=3mm,
 		parsep=0pt, 
 		itemsep=0pt,
 		topsep=-2mm]
-	\input{psalmi_fr/#1.tex}
+	\input{#2}
 	\end{itemize}
 	\end{paracol}
+}
+
+\newcommand{\psalmVulgate}[2][\nextpsalmmode]{
+	#1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
+	#2 numéro du psaume
+	\twocolitemizedtext{psalmi_vulgata/#2-#1.tex}{psalmi_fr/#2.tex}{Psaume #2}
+}
+
+\newcommand{\psalmNova}[2][\nextpsalmmode]{
+	#1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
+	#2 numéro du psaume
+	\twocolitemizedtext{psalmi_nova/#2-#1.tex}{psalmi_fr/#2.tex}{Psaume #2}
+}
+
+\newcommand{\canticumVulgate}[3][\nextpsalmmode]{
+	#1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
+	#2 nom de fichier associé au cantique
+	#3 titre du cantique
+	\twocolitemizedtext{psalmi_vulgata/#2-#1.tex}{psalmi_fr/#2.tex}{Cantique #3}
+}
+
+\newcommand{\canticumNova}[3][\nextpsalmmode]{
+	#1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
+	#2 nom de fichier associé au cantique
+	#3 titre du cantique
+	\twocolitemizedtext{psalmi_nova/#2-#1.tex}{psalmi_fr/#2.tex}{Cantique #3}
 }
 
 \newcommand{\twocoltext}[2]{
@@ -344,7 +512,7 @@ headsep=3mm,
   \addcontentsline{toc}{section}{#3}
 }
 
- \newcommand{\translation}[1]{
+ \newcommand{\translation}[1]{%
 	\emph{#1}
  }
  
