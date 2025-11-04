@@ -273,13 +273,8 @@ end
   %% #3 : the translation of the piece.
   \renewcommand{\labelbuffer}{#2}
   \renewcommand{\numberbuffer}{#1}
-  \columnratio{0.75}
-  \begin{paracol}{2}
   \gregorioscore{gabc/#2}
-  \switchcolumn
   \translation{#3}
-  \end{paracol}
-  \columnratio{0.5}
 }
 
 \newcommand{\hymnus}[1]{
