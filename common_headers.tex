@@ -433,28 +433,28 @@ end
 }
 
 \newcommand{\psalmVulgate}[2][\nextpsalmmode]{
-	#1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
-	#2 numéro du psaume
+	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
+	%% #2 numéro du psaume
 	\twocolitemizedtext{psalmi_vulgata/#2-#1.tex}{psalmi_fr/#2.tex}{Psaume #2}
 }
 
 \newcommand{\psalmNova}[2][\nextpsalmmode]{
-	#1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
-	#2 numéro du psaume
+	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
+	%% #2 numéro du psaume
 	\twocolitemizedtext{psalmi_nova/#2-#1.tex}{psalmi_fr/#2.tex}{Psaume #2}
 }
 
 \newcommand{\canticumVulgate}[3][\nextpsalmmode]{
-	#1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
-	#2 nom de fichier associé au cantique
-	#3 titre du cantique
+	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
+	%% #2 nom de fichier associé au cantique
+	%% #3 titre du cantique
 	\twocolitemizedtext{psalmi_vulgata/#2-#1.tex}{psalmi_fr/#2.tex}{Cantique #3}
 }
 
 \newcommand{\canticumNova}[3][\nextpsalmmode]{
-	#1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
-	#2 nom de fichier associé au cantique
-	#3 titre du cantique
+	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
+	%% #2 nom de fichier associé au cantique
+	%% #3 titre du cantique
 	\twocolitemizedtext{psalmi_nova/#2-#1.tex}{psalmi_fr/#2.tex}{Cantique #3}
 }
 
@@ -480,13 +480,13 @@ end
 }
 
 \newcommand{\lectiobrevis}[3]{
-\smalltitle{Lecture brève}\hfill\rubric{#1}
-\twocoltext{#2}{#3}
+\smalltitle{Lecture brève}
+\twocoltext{\rubric{#1}\\#2}{#3}
 }
 
 \newcommand{\capitulum}[3]{
-\smalltitle{Capitule}\hfill\rubric{#1}
-\twocoltext{#2}{#3}
+\smalltitle{Capitule}
+\twocoltext{\rubric{#1}\\#2}{#3}
 }
 
 \newcommand{\columnbalancinglatin}[1]{
@@ -509,6 +509,15 @@ end
   \renewcommand{\leftmark}{\hyphenpenalty=50{\sc#2}}
   \thispagestyle{empty}
   \addcontentsline{toc}{section}{#3}
+}
+
+\newcommand{\nocturntitle}[1]{
+  \begin{center}
+	{\fontspec[Scale=\customscale]{Futura Book}
+	\MakeUppercase{\Large #1}\\
+	}
+  \end{center}
+  \addcontentsline{toc}{subsection}{#1}
 }
 
  \newcommand{\translation}[1]{%
