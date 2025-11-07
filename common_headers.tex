@@ -435,12 +435,18 @@ end
 \newcommand{\psalmVulgate}[2][\nextpsalmmode]{
 	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
 	%% #2 numéro du psaume
+	\gresetinitiallines{0}
+	\gregorioscore{\subfix{incipits_vulgata/#2-#1}}
+	\gresetinitiallines{1}
 	\twocolitemizedtext{psalmi_vulgata/#2-#1.tex}{psalmi_fr/#2.tex}{Psaume #2}
 }
 
 \newcommand{\psalmNova}[2][\nextpsalmmode]{
 	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
 	%% #2 numéro du psaume
+	\gresetinitiallines{0}
+	\gregorioscore{\subfix{incipits_nova/#2-#1}}
+	\gresetinitiallines{1}
 	\twocolitemizedtext{psalmi_nova/#2-#1.tex}{psalmi_fr/#2.tex}{Psaume #2}
 }
 
@@ -448,6 +454,9 @@ end
 	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
 	%% #2 nom de fichier associé au cantique
 	%% #3 titre du cantique
+	\gresetinitiallines{0}
+	\gregorioscore{\subfix{incipits_vulgata/#2-#1}}
+	\gresetinitiallines{1}
 	\twocolitemizedtext{psalmi_vulgata/#2-#1.tex}{psalmi_fr/#2.tex}{Cantique #3}
 }
 
@@ -455,6 +464,9 @@ end
 	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
 	%% #2 nom de fichier associé au cantique
 	%% #3 titre du cantique
+	\gresetinitiallines{0}
+	\gregorioscore{\subfix{incipits_nova/#2-#1}}
+	\gresetinitiallines{1}
 	\twocolitemizedtext{psalmi_nova/#2-#1.tex}{psalmi_fr/#2.tex}{Cantique #3}
 }
 
