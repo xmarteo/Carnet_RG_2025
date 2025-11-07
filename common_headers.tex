@@ -344,8 +344,8 @@ end
 %% Macro to print the blessing 
 \newcommand{\blessing}{
 	\vspace{2mm}
-	\versiculus{Dóminus vobíscum}{Et cum spíritu tuo}{Le Seigneur soit avec vous}{Et avec votre esprit}
-	\versiculus{Benedícat vos omnípotens Deus, \cc Pater, et Fílius, et Spíritus Sanctus}{Amen}{Et que Dieu tout-puissant vous bénisse, le Père, le Fils, et le Saint-Esprit}{Amen}
+	\versiculus{Dóminus vobíscum.}{Et cum spíritu tuo.}{Le Seigneur soit avec vous.}{Et avec votre esprit.}
+	\versiculus{Benedícat vos omnípotens Deus, \cc Pater, et Fílius, et Spíritus Sanctus.}{Amen.}{Et que Dieu tout-puissant vous bénisse, le Père, le Fils, et le Saint-Esprit.}{Amen.}
 }
 
 %% Macro to print the Pater secreto
@@ -397,12 +397,10 @@ end
 \setlength\columnseprule{0.4pt}
 \setlength{\multicolsep}{6pt plus 2pt minus 1.5pt}
 
-\newcommand{\twocolitemizedtext}[3]{
+\newcommand{\twocolitemizedtext}[2]{
 	%% macro générique pour les cantiques et psaumes
 	%% #1 premier fichier
 	%% #2 deuxième fichier
-	%% #3 titre
-	\smalltitle{#3}
 	\begin{paracol}{2}
 	\begin{itemize}[
 		label=\null, 
@@ -435,39 +433,43 @@ end
 \newcommand{\psalmVulgate}[2][\nextpsalmmode]{
 	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
 	%% #2 numéro du psaume
+	\smalltitle{Psaume #2}
 	\gresetinitiallines{0}
 	\gregorioscore{\subfix{incipits_vulgata/#2-#1}}
 	\gresetinitiallines{1}
-	\twocolitemizedtext{psalmi_vulgata/#2-#1.tex}{psalmi_fr/#2.tex}{Psaume #2}
+	\twocolitemizedtext{psalmi_vulgata/#2-#1.tex}{psalmi_fr/#2.tex}
 }
 
 \newcommand{\psalmNova}[2][\nextpsalmmode]{
 	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
 	%% #2 numéro du psaume
+	\smalltitle{Psaume #2}
 	\gresetinitiallines{0}
 	\gregorioscore{\subfix{incipits_nova/#2-#1}}
 	\gresetinitiallines{1}
-	\twocolitemizedtext{psalmi_nova/#2-#1.tex}{psalmi_fr/#2.tex}{Psaume #2}
+	\twocolitemizedtext{psalmi_nova/#2-#1.tex}{psalmi_fr/#2.tex}
 }
 
 \newcommand{\canticumVulgate}[3][\nextpsalmmode]{
 	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
 	%% #2 nom de fichier associé au cantique
 	%% #3 titre du cantique
+	\smalltitle{Cantique #3}
 	\gresetinitiallines{0}
 	\gregorioscore{\subfix{incipits_vulgata/#2-#1}}
 	\gresetinitiallines{1}
-	\twocolitemizedtext{psalmi_vulgata/#2-#1.tex}{psalmi_fr/#2.tex}{Cantique #3}
+	\twocolitemizedtext{psalmi_vulgata/#2-#1.tex}{psalmi_fr/#2.tex}
 }
 
 \newcommand{\canticumNova}[3][\nextpsalmmode]{
 	%% #1 (optionnel) : mode+differentia. par défaut: mode de la dernière pièce gabc parsée.
 	%% #2 nom de fichier associé au cantique
 	%% #3 titre du cantique
+	\smalltitle{Cantique #3}
 	\gresetinitiallines{0}
 	\gregorioscore{\subfix{incipits_nova/#2-#1}}
 	\gresetinitiallines{1}
-	\twocolitemizedtext{psalmi_nova/#2-#1.tex}{psalmi_fr/#2.tex}{Cantique #3}
+	\twocolitemizedtext{psalmi_nova/#2-#1.tex}{psalmi_fr/#2.tex}
 }
 
 \newcommand{\twocoltext}[2]{
@@ -485,9 +487,9 @@ end
 
 \newcommand{\versiculus}[4]{
 	\twocoltext{
-		\vv #1. \\ \rr #2.
+		\vv #1 \\ \rr #2
 	}{
-		\vv #3. \\ \rr #4.
+		\vv #3 \\ \rr #4
 	}
 }
 
